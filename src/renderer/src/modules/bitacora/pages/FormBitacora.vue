@@ -13,6 +13,17 @@
 errorMessageCliente || "&nbsp;"
 }}</small>
 
+
+<span class="p-float-label mt-2">
+    <Dropdown aria-describedby="text-error-operacion" v-model="operacion" :options="operaciones" optionLabel="nombre" placeholder="Seleccione una operacion" class="w-full md:w-14rem" :class="{ 'p-invalid': errorMessageOperacion }"/>
+
+  <!-- <InputText id="cliente" v-model="cliente" type="text" :class="{ 'p-invalid': errorMessageCliente }"
+    aria-describedby="text-error-cliente" /> -->
+  <label for="operacion">Operacion</label>
+</span>
+<small class="p-error" id="text-error-operacion">{{
+errorMessageOperacion || "&nbsp;"
+}}</small>
 <!-- <span class="p-float-label mt-2">
   <InputText id="apellidos" v-model="apellidos" type="text" :class="{ 'p-invalid': errorMessageApellidos }"
     aria-describedby="text-error-apellidos" />
@@ -65,83 +76,100 @@ import * as yup from 'yup';
 import { Bitacora } from "@renderer/domain/bitacora";
 import { createBitacoraFachada } from "../helpers/nuevaBitacora";
 export default {
-    data() {
-        return {
-            clientes: ["MEGASTOCKEC","ECUALIMFOOD","NOVA","JOSE ESPINOSA"]
-        }
-    },
-    methods: {},
-    setup() {
-        const loading = ref(false);
-        const { handleSubmit, resetForm } = useForm();
-        const validationSchema = yup.object({
-            cliente: yup.string().required('Campo Requerido'),
-        });
-        const { value: cliente, errorMessage: errorMessageCliente } = useField(
-            "cliente",
-            validationSchema.fields.cliente
-        );
+  emits: ["bitacoraInsertada"],
+  data() {
+    return {
+      clientes: ["MEGASTOCKEC", "ECUALIMFOOD", "NOVA", "JOSE ESPINOSA"],
+      operaciones: [{
+        nombre: "NACIONALIZACION PAPEL MONDI BAYWHITE",
+        codigo: "0001"
+      }, {
+        nombre: "NACIONALIZACION CALEFONES",
+        codigo: "0002"
+      }]
+    }
+  },
+  methods: {},
+  setup(_, { emit }) {
+    const loading = ref(false);
+    const { handleSubmit, resetForm } = useForm();
+    const validationSchema = yup.object({
+      cliente: yup.string().required('Campo Requerido'),
+      operacion:yup.object().required('Campo Requerido')
+    });
+    const { value: cliente, errorMessage: errorMessageCliente } = useField(
+      "cliente",
+      validationSchema.fields.cliente
+    );
 
-        const toast = useToast();
-
-
-        const onSubmit = handleSubmit(async (values) => {
-            loading.value = true;
-
-            try {
-                // Validate all fields using Yup's validate method
-                await validationSchema.validate(values, { abortEarly: false });
-
-                const bitacora = {
-                    cliente: values.cliente,
-
-                };
-
-                createBitacoraFachada(bitacora)
-                    .then((x) => {
-                        toast.add({
-                            severity: "info",
-                            summary: "Registro completado exitosamente",
-                            life: 3000,
-                        });
-                        loading.value = false;
-                        resetForm();
-                    })
-                    .catch((error) => {
-                        toast.add({
-                            severity: "error",
-                            summary: "No se pudo completar el registro",
-                            life: 3000,
-                        });
-                        loading.value = false;
-                    });
-            } catch (error) {
-                const errors = {};
-                if (error.inner) {
-                    error.inner.forEach((err) => {
-                        errors[err.path] = err.message;
-                    });
-                }
-
-                errorMessageCliente.value = errors.cliente || '';
+    const { value: operacion, errorMessage: errorMessageOperacion } = useField(
+      "operacion",
+      validationSchema.fields.operacion
+    );
+    const toast = useToast();
 
 
-                loading.value = false;
-            }
-        });
+    const onSubmit = handleSubmit(async (values) => {
+      loading.value = true;
 
-        return {
-            loading,
-            cliente,
-            handleSubmit,
-            onSubmit,
-            errorMessageCliente,
+      try {
+        // Validate all fields using Yup's validate method
+        await validationSchema.validate(values, { abortEarly: false });
+
+        const bitacora = {
+          cliente: values.cliente,
+          operacion:values.operacion
+
         };
-    },
+
+        createBitacoraFachada(bitacora)
+          .then((x) => {
+            toast.add({
+              severity: "info",
+              summary: "Registro completado exitosamente",
+              life: 3000,
+            });
+            loading.value = false;
+            emit("bitacoraInsertada")
+            resetForm();
+          })
+          .catch((error) => {
+            toast.add({
+              severity: "error",
+              summary: "No se pudo completar el registro",
+              life: 3000,
+            });
+            loading.value = false;
+          });
+      } catch (error) {
+        const errors = {};
+        if (error.inner) {
+          error.inner.forEach((err) => {
+            errors[err.path] = err.message;
+          });
+        }
+
+        errorMessageCliente.value = errors.cliente || '';
+        errorMessageOperacion.value=errors.operacion|| ''
+
+        loading.value = false;
+      }
+    });
+
+    return {
+      loading,
+      cliente,
+      operacion,
+      handleSubmit,
+      onSubmit,
+      errorMessageOperacion,
+      errorMessageCliente,
+    };
+  },
 };
 </script>
 <style lang="css">
 .card {
-    margin: 50px
+  margin: 50px
 }
 </style>

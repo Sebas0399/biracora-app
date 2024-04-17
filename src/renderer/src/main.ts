@@ -8,6 +8,11 @@ import ToastService from 'primevue/toastservice';
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row'; 
 import 'primevue/resources/themes/md-light-indigo/theme.css'
+import 'primeicons/primeicons.css'
+import 'primeflex/primeflex.css'
+import Menubar from 'primevue/menubar';
+import SpeedDial from 'primevue/speeddial';
+import Dialog from 'primevue/dialog';
 
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -26,6 +31,9 @@ app.component('ColumnGroup', ColumnGroup)
 app.component('Row', Row)
 app.component('InputText', InputText)
 app.component('Toast', Toast)
-
+app.component('Menubar', Menubar)
+app.component('SpeedDial',SpeedDial)
 app.component('Dropdown',Dropdown)
+app.component('Dialog',Dialog)
+
 app.mount('#app')
