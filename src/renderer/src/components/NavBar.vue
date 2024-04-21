@@ -37,9 +37,11 @@ export default {
                 {
                     label: 'Bitacoras',
                     icon: 'pi pi-home',
-                    route:'/'
+                    command: () => {
+                        this.$router.push('/')
+                    }
                 },
-              
+
                 {
                     label: 'Administrar',
                     icon: 'pi pi-search',
@@ -47,14 +49,18 @@ export default {
                         {
                             label: 'Clientes',
                             icon: 'pi pi-bolt',
-                            shortcut: '⌘+S'
+                            command: () => {
+                                this.$router.push('/clientes')
+                            }
                         },
                         {
                             label: 'Operaciones',
                             icon: 'pi pi-server',
-                            shortcut: '⌘+B'
+                            command: () => {
+                                this.$router.push('/operaciones')
+                            }
                         },
-                        
+
                         {
                             separator: true
                         },

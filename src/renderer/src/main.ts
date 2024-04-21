@@ -18,13 +18,27 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import Dropdown from 'primevue/dropdown';
+import Badge from 'primevue/badge';
+import Avatar from 'primevue/avatar';
+import AvatarGroup from 'primevue/avatargroup';
+// import as directive
+import BadgeDirective from 'primevue/badgedirective';
+import Ripple from 'primevue/ripple';
+import MultiSelect from 'primevue/multiselect';
+
 const app = createApp(App)
 app.use(router)
 app.use(ToastService);
+app.directive('badge', BadgeDirective);
 
-app.use(PrimeVue)
+app.use(PrimeVue,{ripple:true})
 // eslint-disable-next-line vue/no-reserved-component-names
+app.component('Badge', Badge)
+app.directive('ripple', Ripple);
 app.component('Button', Button)
+app.component('Avatar', Avatar)
+app.component('AvatarGroup', AvatarGroup)
+
 app.component('DataTable', DataTable)
 app.component('Column', Column)
 app.component('ColumnGroup', ColumnGroup)
@@ -35,5 +49,6 @@ app.component('Menubar', Menubar)
 app.component('SpeedDial',SpeedDial)
 app.component('Dropdown',Dropdown)
 app.component('Dialog',Dialog)
+app.component('MultiSelect',MultiSelect)
 
 app.mount('#app')

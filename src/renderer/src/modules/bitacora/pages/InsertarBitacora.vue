@@ -3,7 +3,7 @@
     <form @submit="onSubmit">
 
 <span class="p-float-label mt-2">
-    <Dropdown aria-describedby="text-error-cliente" v-model="cliente" :options="clientes"  placeholder="Seleccione un cliente" class="w-full md:w-14rem" :class="{ 'p-invalid': errorMessageCliente }"/>
+    <Dropdown aria-describedby="text-error-cliente" v-model="cliente" :options="clientes" optionLabel="nombre"  placeholder="Seleccione un cliente" class="w-full md:w-14rem" :class="{ 'p-invalid': errorMessageCliente }"/>
 
   <!-- <InputText id="cliente" v-model="cliente" type="text" :class="{ 'p-invalid': errorMessageCliente }"
     aria-describedby="text-error-cliente" /> -->
@@ -75,26 +75,37 @@ import { useField, useForm } from "vee-validate";
 import * as yup from 'yup';
 import { Bitacora } from "@renderer/domain/bitacora";
 import { createBitacoraFachada } from "../helpers/nuevaBitacora";
+import { getClientesFachada } from "@renderer/modules/cliente/helpers/getCliente";
+import { getOperacionesFachada } from "@renderer/modules/operacion/helpers/getOperacion";
 export default {
   emits: ["bitacoraInsertada"],
   data() {
     return {
-      clientes: ["MEGASTOCKEC", "ECUALIMFOOD", "NOVA", "JOSE ESPINOSA"],
-      operaciones: [{
-        nombre: "NACIONALIZACION PAPEL MONDI BAYWHITE",
-        codigo: "0001"
-      }, {
-        nombre: "NACIONALIZACION CALEFONES",
-        codigo: "0002"
-      }]
+      clientes: null,
+      operaciones:null
     }
   },
-  methods: {},
+  mounted() {
+    this.getClientes()
+    this.getOperaciones()
+  },
+  methods: {
+    async getClientes(){
+      await getClientesFachada().then((res)=>{
+        this.clientes=res
+      })
+    },
+    async getOperaciones(){
+      await getOperacionesFachada().then((res)=>{
+        this.operaciones=res
+      })
+    }
+  },
   setup(_, { emit }) {
     const loading = ref(false);
     const { handleSubmit, resetForm } = useForm();
     const validationSchema = yup.object({
-      cliente: yup.string().required('Campo Requerido'),
+      cliente: yup.object().required('Campo Requerido'),
       operacion:yup.object().required('Campo Requerido')
     });
     const { value: cliente, errorMessage: errorMessageCliente } = useField(
